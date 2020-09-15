@@ -8,7 +8,7 @@ import random
 
 content = "die"
 
-for i in range (1, 100):
+for i in range (1, 1000):
     name = ""
     for j in range (1, 20):
         name = name + (str(random.randint(97, 122)))
