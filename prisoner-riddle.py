@@ -3,7 +3,7 @@
 import random
 
 prisoners = []
-total = 20
+total = 100
 alive = total
 blue = 0
 for i in range (0, total):
