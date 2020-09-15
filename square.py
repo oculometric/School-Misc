@@ -11,6 +11,5 @@ limit = int (input ("Enter an integer limit: "))
 ##
 ##print ("Length", len(squares))
 
-print (f'{a} is the list, {(len(a))} is the length'.format ({'a':[s**2 for s in range (1, limit+1) if s % 2]}))
+print ("The length of the list is", len([print("Here is an odd square: ", s**2) for s in range (1, limit+1) if s % 2]))
 
-# this is work in progress, i'm trying to get the string to format such that i can get the length and the list in one line
