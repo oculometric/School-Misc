@@ -1,0 +1,9 @@
+Planet..Diam...Discovery.....
+Mercury 0.38   ancient       
+Venus   0.95   ancient       
+Earth   1      ancient       
+Mars    0.53   ancient       
+Jupiter 11.2   ancient       
+Saturn  9.5    ancient       
+Uranus  4.0    Herschel, 1781
+Neptune 3.9    Galle, 1846   

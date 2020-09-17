@@ -12,4 +12,3 @@ limit = int (input ("Enter an integer limit: "))
 ##print ("Length", len(squares))
 
 print ("The length of the list is", len([print("Here is an odd square: ", s**2) for s in range (1, limit+1) if s % 2]))
-
