@@ -24,42 +24,42 @@ def generatetable (inp, limit=-1):
     return rows[-1]
 
 # QUESTION 1A
-##print ("Welcome. Please type in uppercase letters R, G, or B for the algorithm")
-##
-##isGood = False
-##inp = ''
-##while not isGood:
-##    inp = input ("Type the sequence: ").upper()
-##    if len (inp) > 0:
-##        isGood = True
-##    for c in inp:
-##        if c != 'R' and c != 'G' and c != 'B':
-##            print ("Invalid input")
-##            isGood = False
-##            break
-##print (generatetable(list(inp)))
+print ("Welcome. Please type in uppercase letters R, G, or B for the algorithm")
+
+isGood = False
+inp = ''
+while not isGood:
+    inp = input ("Type the sequence: ").upper()
+    if len (inp) > 0:
+        isGood = True
+    for c in inp:
+        if c != 'R' and c != 'G' and c != 'B':
+            print ("Invalid input")
+            isGood = False
+            break
+print (generatetable(list(inp)))
 
 # QUESTION 1B
-##results = []
-##inp = list("RRRRRRRRR")
-##while inp != list("BBBBBBBBB"):
-##    out = generatetable (inp, limit=1)
-##    if out == list("RRGBRGBB"):
-##        results.append (inp[:])
-##
-##    n = 0
-##    while True:
-##        if inp[n] == "R":
-##            inp[n] = "G"
-##            break
-##        elif inp[n] == "G":
-##            inp[n] = "B"
-##            break
-##        elif inp[n] == "B":
-##            inp[n] = "R"
-##            n+=1
-##print (results)
-##print (len(results))
+results = []
+inp = list("RRRRRRRRR")
+while inp != list("BBBBBBBBB"):
+    out = generatetable (inp, limit=1)
+    if out == list("RRGBRGBB"):
+        results.append (inp[:])
+
+    n = 0
+    while True:
+        if inp[n] == "R":
+            inp[n] = "G"
+            break
+        elif inp[n] == "G":
+            inp[n] = "B"
+            break
+        elif inp[n] == "B":
+            inp[n] = "R"
+            n+=1
+print (results)
+print (len(results))
 
 # QUESTION 1C
 # R _ (must be B given the rules)
@@ -72,6 +72,7 @@ lengthsWithProperty = []
 for i in range (6, 30):
     lengthsWithProperty.append (i)
     inp = ['R' for c in range (0, i)]
+    print (f"Trying length {i}")
     while not (inp[-1] == 'B' and inp[0] == 'B'):
         out = generatetable (inp)
         if out != generatetable ([inp[0], inp[-1]]):
