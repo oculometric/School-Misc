@@ -69,10 +69,11 @@ print (len(results))
 
 # QUESTION 1D
 lengthsWithProperty = []
-for i in range (6, 30):
+for i in range (2, 200):
     lengthsWithProperty.append (i)
     inp = ['R' for c in range (0, i)]
     print (f"Trying length {i}")
+    lim = 0
     while not (inp[-1] == 'B' and inp[0] == 'B'):
         out = generatetable (inp)
         if out != generatetable ([inp[0], inp[-1]]):
@@ -90,6 +91,9 @@ for i in range (6, 30):
             elif inp[n] == "B":
                 inp[n] = "R"
                 n+=1
+        if lim > 10000:
+            break # assume there are no contradictions
+        lim += 1
 
 print (lengthsWithProperty)
 
