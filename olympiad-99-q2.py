@@ -139,7 +139,8 @@ def cleanBox ():
                 blackbox[i][j] = 0
             if blackbox[i][j] == 3:
                 blackbox[i][j] = 1
-        
+
+## MAIN STARTS HERE ##
 
 print ("Welcome to the black box simulator!")
 print (f"Type a pair of integers separated by a space. They must both be between 1 and {GRID_SIZE} inclusive.")
