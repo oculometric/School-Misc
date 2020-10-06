@@ -22,17 +22,16 @@ def getNumerals (n):
     return out
 
 def incrementNumerals (st, n):
+    if (n == 0): return st
     out = ""
     for l in st:
         out += NUMERALS[NUMERALS.index (l)+(2*n)]
     return out
 
 output = ""
-p = 0
+p = len(str(integerinput))-1
 for s in str(integerinput):
-    output = str(incrementNumerals (getNumerals (int(s)), p)) + output
-    p += 1
+    output = output + incrementNumerals (getNumerals (int(s)), p)
+    p -= 1
 
 print (output)
-
-print (incrementNumerals ('IX', 1))
