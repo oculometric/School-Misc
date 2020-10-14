@@ -17,11 +17,23 @@ public class Landscape {
 	}
 	
 	synchronized void set (Coord c, boolean b) {
-		data.get(c.y).set(c.x, b);
+		try {
+			data.get(c.y).set(c.x, b);
+		} catch (Exception e) {}
 	}
 	
 	synchronized boolean get (Coord c) {
-		return data.get(c.y).get(c.x);
+		try {
+			return data.get(c.y).get(c.x);
+		} catch (Exception e) {}
+		return false;
+	}
+
+	synchronized boolean get(int x, int y) {
+		try {
+			return data.get(y).get(x);
+		} catch (Exception e) {}
+		return false;
 	}
 
 }
