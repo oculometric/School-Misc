@@ -1,9 +1,17 @@
 package main;
 
+import java.awt.Button;
 import java.awt.Color;
 import java.awt.Frame;
 import java.awt.Graphics;
+import java.awt.GridLayout;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
@@ -25,10 +33,74 @@ public class AntSimulator extends Frame {
 	
 	public AntSimulator () {
 		super ("ANTS!!!!");
-		setSize (GRID_SIZE*LANDSCAPE_DIMENSION, GRID_SIZE*LANDSCAPE_DIMENSION);
+		setSize (GRID_SIZE*LANDSCAPE_DIMENSION, (GRID_SIZE*LANDSCAPE_DIMENSION)+getInsets().top);
 		setResizable (false);
 		setVisible (false);
+		
+		addMouseListener (new MouseListener() {
+			
+			@Override
+			public void mouseReleased(MouseEvent e) {}
+			
+			@Override
+			public void mousePressed(MouseEvent e) {}
+			
+			@Override
+			public void mouseExited(MouseEvent e) {}
+			
+			@Override
+			public void mouseEntered(MouseEvent e) {}
+			
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				int x = e.getX()/GRID_SIZE;
+				int y = ((e.getY()-getInsets().top)/GRID_SIZE);
+				String input = "";
+				while (true) {
+					input = JOptionPane.showInputDialog("Direction?");
+					if (input == null) return;
+					if (input.length() < 1) return;
+					if (input.length() == 1 && (input.charAt(0) == 'T' || input.charAt(0) == 'B' || input.charAt(0) == 'L' || input.charAt(0) == 'R')) break;
+				}
+				int dir = 0;
+				if (input.charAt(0) == 'T') dir = 3;
+				if (input.charAt(0) == 'B') dir = 1;
+				if (input.charAt(0) == 'L') dir = 2;
+				ants.add(new Ant (x, y, dir));
+				paintSquare (x, y, dir);
+			}
+		});
 	}
+	
+	private void paintAnt (Graphics g, int x, int y, int r) {
+		g.setColor(Color.gray);
+		int arrowBackOffset = (int)(0.25*GRID_SIZE);
+		int arrowFrontOffset = (int)(0.75*GRID_SIZE);
+		int arrowTopOffset = (int)(0.25*GRID_SIZE);
+		int arrowBottomOffset = (int)(0.75*GRID_SIZE);
+		int arrowMiddleOffset = (int)(0.5*GRID_SIZE);
+		
+		int realX = (x*GRID_SIZE);
+		int realY = (y*GRID_SIZE)+getInsets().top;
+		if (r == 0) {
+			g.fillPolygon(
+					new int[] {realX+arrowBackOffset, realX+arrowFrontOffset, realX+arrowBackOffset}, 
+					new int[] {realY+arrowTopOffset, realY+arrowMiddleOffset, realY+arrowBottomOffset}, 3);
+		} else if (r == 1) {
+			g.fillPolygon(
+					new int[] {realX+arrowTopOffset, realX+arrowMiddleOffset, realX+arrowBottomOffset}, 
+					new int[] {realY+arrowBackOffset, realY+arrowFrontOffset, realY+arrowBackOffset}, 3);
+		} else if (r == 2) {
+			g.fillPolygon(
+					new int[] {realX+arrowFrontOffset, realX+arrowBackOffset, realX+arrowFrontOffset}, 
+					new int[] {realY+arrowTopOffset, realY+arrowMiddleOffset, realY+arrowBottomOffset}, 3);
+		} else if (r == 3) {
+			g.fillPolygon(
+					new int[] {realX+arrowTopOffset, realX+arrowMiddleOffset, realX+arrowBottomOffset}, 
+					new int[] {realY+arrowFrontOffset, realY+arrowBackOffset, realY+arrowFrontOffset}, 3);
+		}
+	}
+	
 	
 	public Queue<Coord> paintQueue = new LinkedList<Coord> ();
 	
@@ -43,31 +115,33 @@ public class AntSimulator extends Frame {
 	public void paint (Graphics g) {
 		if (toRepaint == null) {
 			g.setColor(Color.white);
-			g.fillRect(0, 0, LANDSCAPE_DIMENSION*GRID_SIZE, LANDSCAPE_DIMENSION*GRID_SIZE);
+			g.fillRect(0, getInsets().top, LANDSCAPE_DIMENSION*GRID_SIZE, LANDSCAPE_DIMENSION*GRID_SIZE);
 			g.setColor(Color.black);
 			for (int x = 0; x < LANDSCAPE_DIMENSION; x++) {
 				for (int y = 0; y < LANDSCAPE_DIMENSION; y++) {
-					g.drawRect(x*GRID_SIZE, y*GRID_SIZE, GRID_SIZE, GRID_SIZE);
+					g.drawRect(x*GRID_SIZE, (y*GRID_SIZE)+getInsets().top, GRID_SIZE, GRID_SIZE);
+					if (landscape.get(x, y)) {
+						g.fillRect(x*GRID_SIZE, (y*GRID_SIZE)+getInsets().top, GRID_SIZE, GRID_SIZE);
+					}
 				}
 			}
 			
 			for (Ant a : ants) {
-				g.setColor(Color.gray);
-				g.fillRect((int)(((float)a.x+0.25)*GRID_SIZE), (int)(((float)a.y+0.25)*GRID_SIZE), GRID_SIZE/2, GRID_SIZE/2);
+				paintAnt(g, a.x, a.y, a.r);
 			}
 			return;
 		}
 		g.setColor(landscape.get(toRepaint) ? Color.black : Color.white);
-		g.fillRect(toRepaint.x*GRID_SIZE, toRepaint.y*GRID_SIZE, GRID_SIZE, GRID_SIZE);
+		g.fillRect(toRepaint.x*GRID_SIZE, (toRepaint.y*GRID_SIZE)+getInsets().top, GRID_SIZE, GRID_SIZE);
 		g.setColor(Color.black);
-		g.drawRect(toRepaint.x*GRID_SIZE, toRepaint.y*GRID_SIZE, GRID_SIZE, GRID_SIZE);
+		g.drawRect(toRepaint.x*GRID_SIZE, (toRepaint.y*GRID_SIZE)+getInsets().top, GRID_SIZE, GRID_SIZE);
 		if (antDirection != -1) {
-			g.setColor(Color.gray);
-			g.fillRect((int)(((float)toRepaint.x+0.25)*GRID_SIZE), (int)(((float)toRepaint.y+0.25)*GRID_SIZE), GRID_SIZE/2, GRID_SIZE/2);
+			paintAnt (g, toRepaint.x, toRepaint.y, antDirection);
 		}
 		toRepaint = null;
 		antDirection = -1;
 	}
+	
 	
 	private void paintSquare (int x, int y, int a) {
 		toRepaint = new Coord (x, y);
@@ -75,13 +149,16 @@ public class AntSimulator extends Frame {
 		paint (this.getGraphics());
 	}
 	
+	
 	public static void main (String[] args) {
 		AntSimulator d = new AntSimulator ();
 		d.displaySetupDialog();
 		d.startSimulation ();
 	}
 
+	
 	private void iterate () {
+		System.out.println ("Started iteration");
 		ArrayList<Ant> killList = new ArrayList<Ant> ();
 		for (Ant a : ants) {
 			switch (a.r) {
@@ -124,19 +201,43 @@ public class AntSimulator extends Frame {
 	public void startSimulation () {
 		landscape = new Landscape (LANDSCAPE_DIMENSION);
 		setVisible (true);
-		setSize (GRID_SIZE*LANDSCAPE_DIMENSION, GRID_SIZE*LANDSCAPE_DIMENSION);
-		while (true) {
-			try {
-				int input = Integer.parseInt(JOptionPane.showInputDialog("Enter a number of moves to calculate, or -1 to exit"));
-				if (input == -1) System.exit(0);
-				for (int i = 0; i < input; i++) {
-					iterate ();
-					Thread.sleep(1);
+		setSize (GRID_SIZE*LANDSCAPE_DIMENSION, (GRID_SIZE*LANDSCAPE_DIMENSION)+getInsets().top);
+		Frame f = new Frame ("Iterate");
+		f.setSize(100, 150);
+		f.setLayout(new GridLayout (2,1));
+		Button b = new Button ("Iterate n times");
+		b.addActionListener(new ActionListener () {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				try {
+					int input = Integer.parseInt(JOptionPane.showInputDialog("Enter a number of moves to calculate, or -1 to exit"));
+					if (input == -1) System.exit(0);
+					for (int i = 0; i < input; i++) {
+						iterate ();
+						System.out.println (i);
+						Thread.sleep(1);
+					}
+				} catch (Exception ee) {
+					//ee.printStackTrace();
 				}
-			} catch (Exception e) {
-				e.printStackTrace();
 			}
-		}
+			
+		});
+		f.add(b);
+		Button b2 = new Button ("Iterate");
+		b2.addActionListener(new ActionListener () {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				iterate ();
+				System.out.println ("Iterated");
+			}
+			
+		});
+		f.add(b2);
+		f.setVisible(true);
+		f.setResizable(false);
 	}
 	
 	public void displaySetupDialog() {
@@ -166,7 +267,7 @@ public class AntSimulator extends Frame {
 			if (LANDSCAPE_DIMENSION > 999) { preLabel = new JLabel ("Landscape size too large!"); continue; }
 			if (GRID_SIZE < 4) { preLabel = new JLabel ("Grid size too small!"); continue; }
 			if (GRID_SIZE*LANDSCAPE_DIMENSION > Toolkit.getDefaultToolkit().getScreenSize().getHeight()) { preLabel = new JLabel ("Total window size too large for screen!"); continue; }
-			if (NUM_ANTS < 1) { preLabel = new JLabel ("Number of ants too small!"); continue; }
+			if (NUM_ANTS < 0) { preLabel = new JLabel ("Number of ants too small!"); continue; }
 			if (NUM_ANTS >= LANDSCAPE_DIMENSION*LANDSCAPE_DIMENSION) { preLabel = new JLabel ("Number of ants too large!"); continue; }
 			break;
 		}
