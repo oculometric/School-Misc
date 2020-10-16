@@ -4,36 +4,36 @@ import java.util.ArrayList;
 
 public class Landscape {
 
-	private ArrayList<ArrayList<Boolean>> data;
+	private ArrayList<ArrayList<Integer>> data;
 	
 	public Landscape(int dim) {
-		data = new ArrayList<ArrayList<Boolean>> ();
+		data = new ArrayList<ArrayList<Integer>> ();
 		for (int i = 0; i < dim; i++) {
-			data.add(new ArrayList<Boolean>());
+			data.add(new ArrayList<Integer>());
 			for (int j = 0; j < dim; j++) {
-				data.get(i).add(false);
+				data.get(i).add(0);
 			}
 		}
 	}
 	
-	synchronized void set (Coord c, boolean b) {
+	synchronized void set (Coord c, int i) {
 		try {
-			data.get(c.y).set(c.x, b);
+			data.get(c.y).set(c.x, i % 3);
 		} catch (Exception e) {}
 	}
 	
-	synchronized boolean get (Coord c) {
+	synchronized int get (Coord c) {
 		try {
 			return data.get(c.y).get(c.x);
 		} catch (Exception e) {}
-		return false;
+		return 0;
 	}
 
-	synchronized boolean get(int x, int y) {
+	synchronized int get(int x, int y) {
 		try {
 			return data.get(y).get(x);
 		} catch (Exception e) {}
-		return false;
+		return 0;
 	}
 
 }

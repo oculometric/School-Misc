@@ -120,8 +120,12 @@ public class AntSimulator extends Frame {
 			for (int x = 0; x < LANDSCAPE_DIMENSION; x++) {
 				for (int y = 0; y < LANDSCAPE_DIMENSION; y++) {
 					g.drawRect(x*GRID_SIZE, (y*GRID_SIZE)+getInsets().top, GRID_SIZE, GRID_SIZE);
-					if (landscape.get(x, y)) {
+					if (landscape.get(x, y) == 1) {
 						g.fillRect(x*GRID_SIZE, (y*GRID_SIZE)+getInsets().top, GRID_SIZE, GRID_SIZE);
+					} else if (landscape.get(x, y) == 2) {
+						g.setColor(Color.blue);
+						g.fillRect(x*GRID_SIZE, (y*GRID_SIZE)+getInsets().top, GRID_SIZE, GRID_SIZE);
+						g.setColor(Color.black);
 					}
 				}
 			}
@@ -131,7 +135,10 @@ public class AntSimulator extends Frame {
 			}
 			return;
 		}
-		g.setColor(landscape.get(toRepaint) ? Color.black : Color.white);
+		int v = landscape.get(toRepaint);
+		if (v == 0) g.setColor(Color.white);
+		if (v == 1) g.setColor(Color.black);
+		if (v == 2) g.setColor(Color.blue);
 		g.fillRect(toRepaint.x*GRID_SIZE, (toRepaint.y*GRID_SIZE)+getInsets().top, GRID_SIZE, GRID_SIZE);
 		g.setColor(Color.black);
 		g.drawRect(toRepaint.x*GRID_SIZE, (toRepaint.y*GRID_SIZE)+getInsets().top, GRID_SIZE, GRID_SIZE);
@@ -179,17 +186,20 @@ public class AntSimulator extends Frame {
 				paintSquare (a.x, a.y+1, -1);
 				break;
 			}
-			if (landscape.get (a.x, a.y)) {
+			
+			if (landscape.get (a.x, a.y) == 1) {
 				a.r--;
-			} else {
+			} else if (landscape.get (a.x, a.y) == 0) {
 				a.r++;
+			} else {
+				a.r+=2;
 			}
 			if (a.r > 3) a.r = 0;
 			if (a.r < 0) a.r = 3;
 			if (a.x < 0 || a.x >= LANDSCAPE_DIMENSION) killList.add(a);
 			else if (a.y < 0 || a.y >= LANDSCAPE_DIMENSION) killList.add(a);
 			else {
-				landscape.set(new Coord (a.x, a.y), !landscape.get (a.x, a.y));
+				landscape.set(new Coord (a.x, a.y), landscape.get (a.x, a.y)+1); // TODO: Improve rule
 				paintSquare (a.x, a.y, a.r);
 			}
 		}
@@ -216,7 +226,7 @@ public class AntSimulator extends Frame {
 					for (int i = 0; i < input; i++) {
 						iterate ();
 						System.out.println (i);
-						Thread.sleep(1);
+						Thread.sleep(50);
 					}
 				} catch (Exception ee) {
 					//ee.printStackTrace();
