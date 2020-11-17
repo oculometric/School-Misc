@@ -1,9 +1,11 @@
 import random
 
-class Candidate:
-    name = ""
+class Person:
     economic_leaning = 0
     social_leaning = 0
+
+class Candidate (Person): # Barely
+    name = ""
     trustworthiness = 0
     likeability = 0
 
@@ -25,7 +27,7 @@ class Candidate:
         else:
             print ("NOOOO they STOLE the Election! this should be rightfully MINE, but the EVIL Opposition are committing FRAUD!")
 
-class Voter:
+class Voter (Person):
     gullibility = 0
     economic_leaning = 0
     social_leaning = 0
