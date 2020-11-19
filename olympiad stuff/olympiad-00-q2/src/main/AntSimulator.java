@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
 
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
@@ -28,8 +29,6 @@ public class AntSimulator extends Frame {
 	public int GRID_SIZE = 50;
 	public int LANDSCAPE_DIMENSION = 11;
 	public int NUM_ANTS = 2;
-	
-	
 	
 	public AntSimulator () {
 		super ("ANTS!!!!");
@@ -100,10 +99,7 @@ public class AntSimulator extends Frame {
 					new int[] {realY+arrowFrontOffset, realY+arrowBackOffset, realY+arrowFrontOffset}, 3);
 		}
 	}
-	
-	
-	public Queue<Coord> paintQueue = new LinkedList<Coord> ();
-	
+		
 	public Landscape landscape;
 	
 	public ArrayList<Ant> ants = new ArrayList<Ant> ();
@@ -114,6 +110,7 @@ public class AntSimulator extends Frame {
 	@Override
 	public void paint (Graphics g) {
 		if (toRepaint == null) {
+			System.out.println ("Drawing everything");
 			g.setColor(Color.white);
 			g.fillRect(0, getInsets().top, LANDSCAPE_DIMENSION*GRID_SIZE, LANDSCAPE_DIMENSION*GRID_SIZE);
 			g.setColor(Color.black);
@@ -135,6 +132,8 @@ public class AntSimulator extends Frame {
 			}
 			return;
 		}
+		
+		System.out.println ("Drawing square " + toRepaint);
 		int v = landscape.get(toRepaint);
 		if (v == 0) g.setColor(Color.white);
 		if (v == 1) g.setColor(Color.black);
@@ -151,9 +150,11 @@ public class AntSimulator extends Frame {
 	
 	
 	private void paintSquare (int x, int y, int a) {
+		System.out.println ("Painting " + x + " " + y);
 		toRepaint = new Coord (x, y);
 		antDirection = a;
-		repaint (x*GRID_SIZE, y*GRID_SIZE+getInsets().top, GRID_SIZE, GRID_SIZE);
+		paint (this.getGraphics());
+		//repaint (x*GRID_SIZE, (y*GRID_SIZE)+getInsets().top, GRID_SIZE, GRID_SIZE);
 	}
 	
 	
@@ -165,7 +166,6 @@ public class AntSimulator extends Frame {
 
 	
 	private void iterate () {
-		System.out.println ("Started iteration");
 		ArrayList<Ant> killList = new ArrayList<Ant> ();
 		for (Ant a : ants) {
 			switch (a.r) {
@@ -225,8 +225,7 @@ public class AntSimulator extends Frame {
 					if (input == -1) System.exit(0);
 					for (int i = 0; i < input; i++) {
 						iterate ();
-						System.out.println (i);
-						Thread.sleep(50);
+						Thread.sleep(500);
 					}
 				} catch (Exception ee) {
 					//ee.printStackTrace();
@@ -241,7 +240,6 @@ public class AntSimulator extends Frame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				iterate ();
-				System.out.println ("Iterated");
 			}
 			
 		});
@@ -256,7 +254,7 @@ public class AntSimulator extends Frame {
 		JTextField gSizeField = new JTextField ();
 		gSizeField.setText("50");
 		JTextField aField = new JTextField ();
-		aField.setText("2");
+		aField.setText("0");
 		JLabel preLabel = null;
 		while (true) {
 			JOptionPane.showMessageDialog(this, new Object[] {
