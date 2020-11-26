@@ -1,6 +1,14 @@
 from tkinter import Tk, Canvas, Frame, BOTH
 import time
 
+guessLetters = []
+phantomWord = []
+correctWord = ""
+lives = 10
+
+root = Tk()
+ex = Window()
+
 class Window(Frame):
 
     def __init__(self):
@@ -56,19 +64,96 @@ class Window(Frame):
         self.canvas.create_line(200, 120, 170, 180)
         
         self.canvas.pack(fill=BOTH, expand=1)
-        
+
+
+def CheckUniqueness(guess):
+    return guess not in guessLetters
+
+
+def CheckCharacter(guess):
+    for i in range(len(correctWord)):
+        if correctWord[i] == guess:
+            phantomWord[i] = guess
+    simWord = ""
+    for j in range(len(correctWord)):
+        simWord += phantomWord[i]
+    return simWord == correctWord  # Returns true if all characters have been guessed
+
+
+def CheckWord(guess):
+    return guess == correctWord
+
+
+def LoseLife():
+    global lives
+    lives -= 1
+
+def CheckWinCondition ()
+    if lives <= 0:
+        Lose()
+
+
+def Win():
+    print("You win!")
+    RequestReplay()
+
+
+def Lose():
+    print("You lose...")
+    RequestReplay()
+
+def RequestReplay():
+    while True:
+        print("Do you wish to replay? (Y or N)")
+        choice = input(">>> ").strip().lower()
+        if choice == "y":
+            RequestParameters()
+            break
+        elif choice == "n":
+            System.exit (0)
+        else:
+            print("Invalid input")
+
+def InitialiseInterface ():
+    global root
+    global ex
+    root.geometry("400x350+100+100")
+    ex.drawCharacter()
+    while (True): # TODO REMOVE
+        root.update_idletasks()
+        root.update()
+        time.sleep (1)
+        lives -= 1
+        ex.drawCharacter()
+
+def RequestParameters():
+    guessLetters = []
+    lives = 10
+    while True:
+        print ("What difficulty do you want? (hard, normal, easy)")
+        choice = input (">>> ").strip().lower()
+        if choice == "hard":
+            GenerateWord (2)
+            break
+        elif choice == "normal":
+            GenerateWord (1)
+            break
+        elif choice == "easy":
+            GenerateWord (0)
+            break
+        else:
+            print ("Invalid input")
+    InitialiseInterface()
+    PlayLoop()
+
 def DrawCharacter ():
     # TODO
 
-root = Tk()
-ex = Window()
-root.geometry("400x350+100+100")
-ex.drawCharacter()
-while (True):
-    root.update_idletasks()
-    root.update()
-    time.sleep (1)
-    lives -= 1
-    ex.drawCharacter()
+
+
+def __main__():
+    print ("Welcome to the program.")
+    RequestParameters ()
+
 
     
