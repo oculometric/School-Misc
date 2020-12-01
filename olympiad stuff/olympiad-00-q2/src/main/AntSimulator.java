@@ -20,8 +20,9 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 
-public class AntSimulator extends Frame {
+public class AntSimulator extends JFrame {
 	/**
 	 * 
 	 */
@@ -35,8 +36,10 @@ public class AntSimulator extends Frame {
 		setSize (GRID_SIZE*LANDSCAPE_DIMENSION, (GRID_SIZE*LANDSCAPE_DIMENSION)+getInsets().top);
 		setResizable (false);
 		setVisible (false);
+		p = new DrawingPanel (this);
+		add (p);
 		
-		addMouseListener (new MouseListener() {
+		p.addMouseListener (new MouseListener() {
 			
 			@Override
 			public void mouseReleased(MouseEvent e) {}
@@ -66,124 +69,52 @@ public class AntSimulator extends Frame {
 				if (input.charAt(0) == 'B') dir = 1;
 				if (input.charAt(0) == 'L') dir = 2;
 				ants.add(new Ant (x, y, dir));
-				paintSquare (x, y, dir);
+				p.paintSquare (x, y, dir);
 			}
 		});
-	}
-	
-	private void paintAnt (Graphics g, int x, int y, int r) {
-		g.setColor(Color.gray);
-		int arrowBackOffset = (int)(0.25*GRID_SIZE);
-		int arrowFrontOffset = (int)(0.75*GRID_SIZE);
-		int arrowTopOffset = (int)(0.25*GRID_SIZE);
-		int arrowBottomOffset = (int)(0.75*GRID_SIZE);
-		int arrowMiddleOffset = (int)(0.5*GRID_SIZE);
-		
-		int realX = (x*GRID_SIZE);
-		int realY = (y*GRID_SIZE)+getInsets().top;
-		if (r == 0) {
-			g.fillPolygon(
-					new int[] {realX+arrowBackOffset, realX+arrowFrontOffset, realX+arrowBackOffset}, 
-					new int[] {realY+arrowTopOffset, realY+arrowMiddleOffset, realY+arrowBottomOffset}, 3);
-		} else if (r == 1) {
-			g.fillPolygon(
-					new int[] {realX+arrowTopOffset, realX+arrowMiddleOffset, realX+arrowBottomOffset}, 
-					new int[] {realY+arrowBackOffset, realY+arrowFrontOffset, realY+arrowBackOffset}, 3);
-		} else if (r == 2) {
-			g.fillPolygon(
-					new int[] {realX+arrowFrontOffset, realX+arrowBackOffset, realX+arrowFrontOffset}, 
-					new int[] {realY+arrowTopOffset, realY+arrowMiddleOffset, realY+arrowBottomOffset}, 3);
-		} else if (r == 3) {
-			g.fillPolygon(
-					new int[] {realX+arrowTopOffset, realX+arrowMiddleOffset, realX+arrowBottomOffset}, 
-					new int[] {realY+arrowFrontOffset, realY+arrowBackOffset, realY+arrowFrontOffset}, 3);
-		}
 	}
 		
 	public Landscape landscape;
 	
 	public ArrayList<Ant> ants = new ArrayList<Ant> ();
 	
-	private Coord toRepaint;
-	private int antDirection;
-	
-	@Override
-	public void paint (Graphics g) {
-		if (toRepaint == null) {
-			System.out.println ("Drawing everything");
-			g.setColor(Color.white);
-			g.fillRect(0, getInsets().top, LANDSCAPE_DIMENSION*GRID_SIZE, LANDSCAPE_DIMENSION*GRID_SIZE);
-			g.setColor(Color.black);
-			for (int x = 0; x < LANDSCAPE_DIMENSION; x++) {
-				for (int y = 0; y < LANDSCAPE_DIMENSION; y++) {
-					g.drawRect(x*GRID_SIZE, (y*GRID_SIZE)+getInsets().top, GRID_SIZE, GRID_SIZE);
-					if (landscape.get(x, y) == 1) {
-						g.fillRect(x*GRID_SIZE, (y*GRID_SIZE)+getInsets().top, GRID_SIZE, GRID_SIZE);
-					} else if (landscape.get(x, y) == 2) {
-						g.setColor(Color.blue);
-						g.fillRect(x*GRID_SIZE, (y*GRID_SIZE)+getInsets().top, GRID_SIZE, GRID_SIZE);
-						g.setColor(Color.black);
-					}
-				}
-			}
-			
-			for (Ant a : ants) {
-				paintAnt(g, a.x, a.y, a.r);
-			}
-			return;
-		}
-		
-		System.out.println ("Drawing square " + toRepaint);
-		int v = landscape.get(toRepaint);
-		if (v == 0) g.setColor(Color.white);
-		if (v == 1) g.setColor(Color.black);
-		if (v == 2) g.setColor(Color.blue);
-		g.fillRect(toRepaint.x*GRID_SIZE, (toRepaint.y*GRID_SIZE)+getInsets().top, GRID_SIZE, GRID_SIZE);
-		g.setColor(Color.black);
-		g.drawRect(toRepaint.x*GRID_SIZE, (toRepaint.y*GRID_SIZE)+getInsets().top, GRID_SIZE, GRID_SIZE);
-		if (antDirection != -1) {
-			paintAnt (g, toRepaint.x, toRepaint.y, antDirection);
-		}
-		toRepaint = null;
-		antDirection = -1;
-	}
-	
-	
-	private void paintSquare (int x, int y, int a) {
-		System.out.println ("Painting " + x + " " + y);
-		toRepaint = new Coord (x, y);
-		antDirection = a;
-		paint (this.getGraphics());
-		//repaint (x*GRID_SIZE, (y*GRID_SIZE)+getInsets().top, GRID_SIZE, GRID_SIZE);
-	}
-	
+	public Coord toRepaint;
+	public int antDirection;
+	private DrawingPanel p;
 	
 	public static void main (String[] args) {
-		AntSimulator d = new AntSimulator ();
-		d.displaySetupDialog();
-		d.startSimulation ();
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				AntSimulator d = new AntSimulator ();
+				d.displaySetupDialog();
+				d.startSimulation ();
+			}
+		});
 	}
 
 	
 	private void iterate () {
 		ArrayList<Ant> killList = new ArrayList<Ant> ();
 		for (Ant a : ants) {
+			System.out.println ("Iterating ant: " + a);
 			switch (a.r) {
 			case 0:
 				a.x++;
-				paintSquare (a.x-1, a.y, -1);
+				p.paintSquare (a.x-1, a.y, -1);
 				break;
 			case 1:
 				a.y++;
-				paintSquare (a.x, a.y-1, -1);
+				p.paintSquare (a.x, a.y-1, -1);
 				break;
 			case 2:
 				a.x--;
-				paintSquare (a.x+1, a.y, -1);
+				p.paintSquare (a.x+1, a.y, -1);
 				break;
 			case 3:
 				a.y--;
-				paintSquare (a.x, a.y+1, -1);
+				p.paintSquare (a.x, a.y+1, -1);
+				break;
+			default:
 				break;
 			}
 			
@@ -200,7 +131,7 @@ public class AntSimulator extends Frame {
 			else if (a.y < 0 || a.y >= LANDSCAPE_DIMENSION) killList.add(a);
 			else {
 				landscape.set(new Coord (a.x, a.y), landscape.get (a.x, a.y)+1); // TODO: Improve rule
-				paintSquare (a.x, a.y, a.r);
+				p.paintSquare (a.x, a.y, a.r);
 			}
 		}
 		for (Ant k : killList) {
@@ -212,7 +143,7 @@ public class AntSimulator extends Frame {
 		landscape = new Landscape (LANDSCAPE_DIMENSION);
 		setVisible (true);
 		setSize (GRID_SIZE*LANDSCAPE_DIMENSION, (GRID_SIZE*LANDSCAPE_DIMENSION)+getInsets().top);
-		Frame f = new Frame ("Iterate");
+		JFrame f = new JFrame ("Iterate");
 		f.setSize(100, 150);
 		f.setLayout(new GridLayout (2,1));
 		Button b = new Button ("Iterate n times");
