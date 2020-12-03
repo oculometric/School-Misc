@@ -139,6 +139,8 @@ def GenerateWord (l, d):
         phantomWord.append ('_')
 
 def RequestParameters():
+	global guessLetters
+	global lives
     guessLetters = []
     lives = 10
     wlist = "words.txt"
@@ -148,6 +150,8 @@ def RequestParameters():
         if choice == "y":
             wlist = "christmas_words.txt"
             break
+		if choice == "n":
+				break
         else:
             print ("Invalid input")
     
