@@ -8,12 +8,11 @@ phantomWord = []
 correctWord = ""
 lives = 10
 
-def ReadWordlist (path, i, j):
+def ReadWordlist (path, i, j): # Read a word list file into a list of individual words (1 word per line)
     file = open (path, 'r')
     return [w.strip() for w in file.readlines() if len(w.strip()) <= j and len (w.strip()) >= i]
 
 class Window(Frame):
-
     def __init__(self):
         super().__init__()
         self.master.title("Hangman")
@@ -23,11 +22,11 @@ class Window(Frame):
 root = Tk()
 ex = Window()
 
-def CheckUniqueness(guess):
+def CheckUniqueness(guess): # Check to see if the user has already guessed this string
     return guess not in guessLetters
 
 
-def CheckCharacter(guess):
+def CheckCharacter(guess): # Check to see if this character
     for i in range(len(correctWord)):
         if correctWord[i] == guess:
             phantomWord[i] = guess
@@ -122,16 +121,16 @@ def InitialiseInterface ():
     root.update_idletasks()
     root.update()
 
-def GenerateWord (d):
+def GenerateWord (l, d):
     global phantomWord
     global correctWord
     words = []
     if (d) == 0:
-        words = ReadWordlist ("words.txt", 3, 4)
+        words = ReadWordlist (l, 3, 4)
     if (d) == 1:
-        words = ReadWordlist ("words.txt", 4, 6)
+        words = ReadWordlist (l, 4, 6)
     if (d) == 2:
-        words = ReadWordlist ("words.txt", 6, 8)
+        words = ReadWordlist (l, 6, 8)
 
     word = words[random.randint (0, len(words)-1)]
     correctWord = word
@@ -142,17 +141,27 @@ def GenerateWord (d):
 def RequestParameters():
     guessLetters = []
     lives = 10
+    wlist = "words.txt"
+    while True:
+        print ("Would you like the Christmas version (Y or N)?")
+        choice = input (">>> ").strip().lower()
+        if choice == "y":
+            wlist = "christmas_words.txt"
+            break
+        else:
+            print ("Invalid input")
+    
     while True:
         print ("What difficulty do you want? (hard, normal, easy)")
         choice = input (">>> ").strip().lower()
         if choice == "hard":
-            GenerateWord (2)
+            GenerateWord (wlist, 2)
             break
         elif choice == "normal":
-            GenerateWord (1)
+            GenerateWord (wlist, 1)
             break
         elif choice == "easy":
-            GenerateWord (0)
+            GenerateWord (wlist, 0)
             break
         else:
             print ("Invalid input")
