@@ -2,6 +2,9 @@
 plaintext = input ("Enter some plaintext (spaces will not be preserved): ").lower()
 while True:
     key = int(input ("Enter a key: ")) % 26
+    if key == 0:
+        print ("No change!")
+        continue
     ciphertext = ""
     for c in plaintext:
         if c != ' ':
