@@ -72,7 +72,7 @@ def add_ship_if_valid (length, rotate, locate): # Returns 0 if success, 1 if shi
     for sq in test_squares:
         if sq > 100 or sq < 0:
             return 1
-        if test_square != 0:
+        if test_square (sq) != 0:
             return 1
     ships_length.append (length)
     ships_rotate.append (rotate)
@@ -91,9 +91,38 @@ def print_shipsboard ():
             print (" ", end='')
             if x == 9:
                 print ("")
-#print_shipsboard()
-#update_shipsboard()
-#print_shipsboard()
+
+
+
+def run_ship_placement_alg (a, c, m, l):
+    r = 0
+    oldr = 0
+    while (True):
+        r = ((a*r)+c)%m
+        x = r%10
+        y = (r//10)%10
+        r = ((a*r)+c)%m
+        if add_ship_if_valid (l, r%2, (y*10)+x) == 0:
+            print (x, y, "V" if r%2==1 else "H")
+            return
+    
+    
 update_shipsboard()
-add_ship_if_valid (5, 0, 00)
-print_shipsboard()
+a = int (input("Enter a: "))
+c = int (input("Enter c: "))
+m = int (input("Enter m: "))
+
+run_ship_placement_alg (a, c, m, 4)
+
+run_ship_placement_alg (a, c, m, 3)
+run_ship_placement_alg (a, c, m, 3)
+
+run_ship_placement_alg (a, c, m, 2)
+run_ship_placement_alg (a, c, m, 2)
+run_ship_placement_alg (a, c, m, 2)
+
+run_ship_placement_alg (a, c, m, 1)
+run_ship_placement_alg (a, c, m, 1)
+run_ship_placement_alg (a, c, m, 1)
+run_ship_placement_alg (a, c, m, 1)
+
