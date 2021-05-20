@@ -35,7 +35,6 @@ def update_shipsboard ():
         for j in range (10):
             arr.append (0)
         shipsboard.append (arr)
-    # TODO: Update board with ships
     for ship_ind in range (0, len(ships_length)):
         if ships_rotate[ship_ind] == 0:
             for i in range (0, ships_length[ship_ind]):
@@ -49,7 +48,7 @@ def test_mini (sq):
         return 1
     return 0
     
-def test_square (sq): # Returns 0 if empty, 1 if occupied, 2 if adjacent to an occupied square
+def test_square (sq): # Returns 0 if clear, 1 if occupied, 2 if adjacent to an occupied square
     if test_mini (sq) == 1: return 1
     if test_mini (r(sq)) == 1: return 2
     if test_mini (l(sq)) == 1: return 2
@@ -88,7 +87,7 @@ def print_shipsboard ():
                 print ("x", end='')
             else:
                 print (" ", end='')
-            print (" ", end='')
+            print ("", end='')
             if x == 9:
                 print ("")
 
@@ -99,15 +98,19 @@ def run_ship_placement_alg (a, c, m, l):
     oldr = 0
     while (True):
         r = ((a*r)+c)%m
+        #print (r)
         x = r%10
         y = (r//10)%10
         r = ((a*r)+c)%m
+        #print (r)
         if add_ship_if_valid (l, r%2, (y*10)+x) == 0:
             print (x, y, "V" if r%2==1 else "H")
+            update_shipsboard()
             return
     
     
 update_shipsboard()
+
 a = int (input("Enter a: "))
 c = int (input("Enter c: "))
 m = int (input("Enter m: "))
@@ -126,3 +129,4 @@ run_ship_placement_alg (a, c, m, 1)
 run_ship_placement_alg (a, c, m, 1)
 run_ship_placement_alg (a, c, m, 1)
 
+print_shipsboard()
